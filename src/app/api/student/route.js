@@ -1,25 +1,29 @@
 import connectDB from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
-import { StudentModel } from "@/models/Student";
+import { TaskModel } from "@/models/Task";  // Cambiar StudentModel por TaskModel
 
-export const POST = async (req, res) => {
-    await connectDB()   
+// Crear un nuevo documento
+export const POST = async (req) => {
+    await connectDB();
     try {
-        const body = await req.json()
-        const newStudent = await StudentModel.create(body)
-        return NextResponse.json({data:newStudent}, {status:201})
+        const body = await req.json();
+        console.log("Received body:", body);
+        const newTask = await TaskModel.create(body);
+        return NextResponse.json({ data: newTask }, { status: 201 });
     } catch (error) {
-        return NextResponse.json({data: null}, {status:500})
+        console.error("Error creating task:", error);
+        return NextResponse.json({ data: null, error: error.message || "Internal Server Error" }, { status: 500 });
     }
-}
+};
 
+// Obtener todos los documentos
 export const GET = async () => {
-    await connectDB()
+    await connectDB();
     try {
-        const result = await StudentModel.find({})
-        return NextResponse.json({data:result}, {status:200})
+        const result = await TaskModel.find({});
+        return NextResponse.json({ data: result }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({data: null}, {status:500})
+        console.error("Error fetching tasks:", error); // Agrega logging para depuración
+        return NextResponse.json({ data: null, error: error.message || "Internal Server Error" }, { status: 500 });
     }
-
-}
+};

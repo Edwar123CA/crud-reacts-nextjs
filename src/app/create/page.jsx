@@ -1,27 +1,46 @@
 "use client";
 import Form from "@/components/Form";
 import { useRouter } from "next/navigation";
-const uri = "http://localhost:3000/api/student";
+
+const uri = "http://localhost:3000/api/student";  // Cambia la URL a /api/task
 
 const Create = () => {
   const router = useRouter();
 
   const onSubmitCreate = async (formData) => {
     console.log("Datos capturados del Form: ", formData);
-    const { name, age } = formData;
+    
+    // Asegúrate de que los campos en formData coincidan con el esquema
+    const {
+      taskName,
+      taskDescription,
+      taskQuantity,
+      dueDate,
+      priority,
+      status,
+      assignedTo
+    } = formData;
 
-    if (!formData) {
-      alert("Complete the fields.");
+    if (!taskName || !taskDescription || !taskQuantity || !dueDate) {
+      alert("Complete the required fields.");
       return;
     }
-    //console.log(`Name: ${name} Age: ${age}`);
+
     try {
       const response = await fetch(uri, {
         method: "POST",
         headers: {
-          "Content-type": "application/json",
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: name, age: age }),
+        body: JSON.stringify({
+          taskName,
+          taskDescription,
+          taskQuantity,
+          dueDate,
+          priority,
+          status,
+          assignedTo
+        }),
       });
       if (response.ok) {
         router.refresh();
